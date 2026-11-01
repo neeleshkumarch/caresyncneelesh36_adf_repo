@@ -19,6 +19,15 @@
 		},
 		"LS_PostgreSql_properties_typeProperties_username": {
 			"value": "neondb_owner"
+		},
+		"LS_AzureSqlDatabase_properties_typeProperties_server": {
+			"value": "caresyncneelesh36-server.database.windows.net"
+		},
+		"LS_AzureSqlDatabase_properties_typeProperties_database": {
+			"value": "sql-db-caresyncneelesh36"
+		},
+		"LS_AzureSqlDatabase_properties_typeProperties_userName": {
+			"value": "neeleshkumar"
 		}
 	}
 }
