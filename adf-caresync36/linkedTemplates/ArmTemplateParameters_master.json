@@ -11,15 +11,6 @@
 		"LS_AzureKeyVault_properties_typeProperties_baseUrl": {
 			"value": "https://caresyncneel36-keyvault.vault.azure.net/"
 		},
-		"LS_PostgreSql_properties_typeProperties_server": {
-			"value": "ep-ancient-silence-aoddtk3m-pooler.c-2.ap-southeast-1.aws.neon.tech"
-		},
-		"LS_PostgreSql_properties_typeProperties_database": {
-			"value": "neondb"
-		},
-		"LS_PostgreSql_properties_typeProperties_username": {
-			"value": "neondb_owner"
-		},
 		"LS_AzureSqlDatabase_properties_typeProperties_server": {
 			"value": "caresyncneelesh36-server.database.windows.net"
 		},
@@ -28,6 +19,15 @@
 		},
 		"LS_AzureSqlDatabase_properties_typeProperties_userName": {
 			"value": "neeleshkumar"
+		},
+		"LS_PostgreSql_properties_typeProperties_server": {
+			"value": "ep-ancient-silence-aoddtk3m-pooler.c-2.ap-southeast-1.aws.neon.tech"
+		},
+		"LS_PostgreSql_properties_typeProperties_database": {
+			"value": "neondb"
+		},
+		"LS_PostgreSql_properties_typeProperties_username": {
+			"value": "neondb_owner"
 		},
 		"containerUri": {
 			"value": ""
