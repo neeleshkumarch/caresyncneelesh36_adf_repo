@@ -162,7 +162,7 @@
 								"referenceName": "DS_ADLS_Parquet",
 								"type": "DatasetReference",
 								"parameters": {
-									"container": "landing",
+									"container": "landing-v3",
 									"folder": {
 										"value": "@concat(\n    activity('Read Table Details').output.firstRow.source_system,\n'/',\nactivity('Read Table Details').output.firstRow.source_table_name,\n'/',\nvariables('start_time')\n)",
 										"type": "Expression"
