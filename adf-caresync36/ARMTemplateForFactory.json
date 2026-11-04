@@ -38,6 +38,10 @@
 		"LS_PostgreSql_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "neondb_owner"
+		},
+		"LS_AzureDatabricks_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "1103-110131-95iimopn"
 		}
 	},
 	"variables": {
@@ -170,6 +174,84 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "Landing to Bronze",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/neeleshkumar-repo/neeleshcaresync-adb-repo/Landing_to_Bronze",
+							"baseParameters": {
+								"source_system": {
+									"value": "@activity('Read Table Details').output.firstRow.source_system",
+									"type": "Expression"
+								},
+								"table_name": {
+									"value": "@activity('Read Table Details').output.firstRow.bronze_table_name",
+									"type": "Expression"
+								},
+								"landing_timestamp": {
+									"value": "@variables('start_time')",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "LS_AzureDatabricks",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Bronze to Silver",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Landing to Bronze",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/neeleshkumar-repo/neeleshcaresync-adb-repo/Bronze_to_silver",
+							"baseParameters": {
+								"table_name": {
+									"value": "@activity('Read Table Details').output.firstRow.silver_table_name",
+									"type": "Expression"
+								},
+								"landing_timestamp": {
+									"value": "@variables('start_time')",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "LS_AzureDatabricks",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"policy": {
@@ -191,7 +273,8 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_PostgreSql')]",
-				"[concat(variables('factoryId'), '/datasets/DS_ADLS_Parquet')]"
+				"[concat(variables('factoryId'), '/datasets/DS_ADLS_Parquet')]",
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureDatabricks')]"
 			]
 		},
 		{
@@ -512,6 +595,30 @@
 					},
 					"sslMode": 2,
 					"authenticationType": "Basic"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureKeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_AzureDatabricks')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-7405614455406707.7.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "adb-access-token"
+					},
+					"existingClusterId": "[parameters('LS_AzureDatabricks_properties_typeProperties_existingClusterId')]"
 				}
 			},
 			"dependsOn": [
