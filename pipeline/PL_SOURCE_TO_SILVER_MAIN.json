@@ -140,7 +140,7 @@
 									{
 										"type": "Query",
 										"text": {
-											"value": "\n\n\n\nUPDATE ctrl36.audit_log\nSET STATUS= 'SUCCESS', end_time=SYSDATETIME(), records_written = 50\nWHERE adf_run_id='@{pipeline().parameters.adf_run_id}' and table_id=@{item().table_id}",
+											"value": "\n\n\n\nUPDATE ctrl36.audit_log\nSET STATUS= 'FAILED', end_time=SYSDATETIME(), records_written = 50\nWHERE adf_run_id='@{pipeline().parameters.adf_run_id}' and table_id=@{item().table_id}",
 											"type": "Expression"
 										}
 									}
