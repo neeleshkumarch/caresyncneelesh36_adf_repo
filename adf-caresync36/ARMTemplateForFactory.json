@@ -11,6 +11,10 @@
 			"type": "string",
 			"defaultValue": "https://caresyncproject36.dfs.core.windows.net/"
 		},
+		"LS_AzureDatabricks_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "1103-110131-95iimopn"
+		},
 		"LS_AzureKeyVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://caresyncneel36-keyvault.vault.azure.net/"
@@ -38,10 +42,6 @@
 		"LS_PostgreSql_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "neondb_owner"
-		},
-		"LS_AzureDatabricks_properties_typeProperties_existingClusterId": {
-			"type": "string",
-			"defaultValue": "1103-110131-95iimopn"
 		}
 	},
 	"variables": {
@@ -281,7 +281,7 @@
 								{
 									"type": "Query",
 									"text": {
-										"value": "\nUPDATE ctrl36.audit_log\nSET STATUS= 'FAILED', end_time=SYSDATETIME(),\nrecords_written=@{activity('Bronze to Silver').output.runoutput}\nWHERE adf_run_id='@{pipeline().parameters.adf_run_id}' and table_id=@{pipeline().parameters.table_id}",
+										"value": "\nUPDATE ctrl36.audit_log\nSET STATUS= 'SUCCESS', end_time=SYSDATETIME(),\nrecords_written=@{activity('Bronze to Silver').output.runoutput}\nWHERE adf_run_id='@{pipeline().parameters.adf_run_id}' and table_id=@{pipeline().parameters.table_id}",
 										"type": "Expression"
 									}
 								}
@@ -427,7 +427,7 @@
 											{
 												"type": "Query",
 												"text": {
-													"value": "INSERT INTO ctrl36.audit_log(adf_run_id,table_id,stage,status,start_time) VALUES('a1',@{item().table_id},'SOURCE_TO_SILVER','IN_PROGRESS',SYSUTCDATETIME())",
+													"value": "INSERT INTO ctrl36.audit_log(adf_run_id,table_id,stage,status,start_time) \nVALUES('@{pipeline().parameters.adf_run_id}',@{item().table_id},'SOURCE_TO_SILVER','IN_PROGRESS',SYSUTCDATETIME())",
 													"type": "Expression"
 												}
 											}
@@ -463,7 +463,7 @@
 											{
 												"type": "Query",
 												"text": {
-													"value": "\n\n\n\nUPDATE ctrl36.audit_log\nSET STATUS= 'SUCCESS', end_time=SYSDATETIME(), records_written = 50\nWHERE adf_run_id='@{pipeline().parameters.adf_run_id}' and table_id=@{item().table_id}",
+													"value": "\n\n\n\nUPDATE ctrl36.audit_log\nSET STATUS= 'FAILED', end_time=SYSDATETIME(), records_written = 50\nWHERE adf_run_id='@{pipeline().parameters.adf_run_id}' and table_id=@{item().table_id}",
 													"type": "Expression"
 												}
 											}
@@ -485,7 +485,7 @@
 					},
 					"adf_run_id": {
 						"type": "string",
-						"defaultValue": "a3"
+						"defaultValue": "a4"
 					}
 				},
 				"variables": {
@@ -662,6 +662,30 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_AzureDatabricks')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-7405614455406707.7.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "adb-access-token"
+					},
+					"existingClusterId": "[parameters('LS_AzureDatabricks_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureKeyVault')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LS_AzureKeyVault')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -724,30 +748,6 @@
 					},
 					"sslMode": 2,
 					"authenticationType": "Basic"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_AzureKeyVault')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_AzureDatabricks')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://adb-7405614455406707.7.azuredatabricks.net",
-					"accessToken": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LS_AzureKeyVault",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "adb-access-token"
-					},
-					"existingClusterId": "[parameters('LS_AzureDatabricks_properties_typeProperties_existingClusterId')]"
 				}
 			},
 			"dependsOn": [
