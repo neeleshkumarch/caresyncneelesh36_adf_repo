@@ -124,7 +124,7 @@
 							"source": {
 								"type": "PostgreSqlV2Source",
 								"query": {
-									"value": "select * from PUBLIC.@{activity('Read Table Details').output.firstRow.source_table_name}\n@{ \n    if(equals(activity('Read Table Details').output.firstRow.load_type,'FULL')\n         ,'',\n        concat(\n            ' WHERE ', activity('Read Table Details').output.firstRow.watermark_column, ' > ', '''', variables('watermark_value'), ''''\n         )   \n    )\n}\n",
+									"value": "select * from PUBLIC.@{activity('Read Table Details').output.firstRow.source_table_name}\n@{ \n    if(equals(activity('Read Table Details').output.firstRow.load_type,'FULL')\n         ,'',\n        concat(\n            'WHERE ', activity('Read Table Details').output.firstRow.watermark_column , ' > ', '''',variables('watermark_value'),''''\n         )   \n    )\n}\n",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00"
@@ -283,7 +283,7 @@
 								{
 									"type": "Query",
 									"text": {
-										"value": "\nUPDATE ctrl36.audit_log\nSET STATUS= 'SUCCESS', end_time=SYSDATETIME(),\nrecords_written=@{activity('Bronze to Silver').output.runoutput}\nWHERE adf_run_id='@{pipeline().parameters.adf_run_id}' and table_id=@{pipeline().parameters.table_id}",
+										"value": "\nUPDATE ctrl36.audit_log\nSET STATUS= 'SUCCESS', end_time=SYSUTCDATETIME(),\nrecords_written=@{activity('Bronze to Silver').output.runOutput}\nWHERE adf_run_id='@{pipeline().parameters.adf_run_id}' and table_id=@{pipeline().parameters.table_id}",
 										"type": "Expression"
 									}
 								}
@@ -620,7 +620,7 @@
 					},
 					"adf_run_id": {
 						"type": "string",
-						"defaultValue": "a5"
+						"defaultValue": "a9"
 					}
 				},
 				"variables": {
