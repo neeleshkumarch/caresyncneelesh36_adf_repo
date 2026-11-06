@@ -82,7 +82,7 @@
 							"value": "@variables('start_time')",
 							"type": "Expression"
 						},
-						"Source File Format": {
+						"source_file_format": {
 							"value": "@coalesce(activity('Read Table Details').output.firstRow.Source_file_format,'')",
 							"type": "Expression"
 						}
