@@ -136,7 +136,7 @@
 									"type": "Expression"
 								},
 								"source_file_format": {
-									"value": "@coalesce(activity('Read Table Details').output.firstRow.Source_file_format,'')",
+									"value": "@coalesce(activity('Read Table Details').output.firstRow.source_file_format,'')",
 									"type": "Expression"
 								}
 							}
@@ -461,7 +461,7 @@
 													"type": "BinarySource",
 													"storeSettings": {
 														"type": "AzureBlobFSReadSettings",
-														"recursive": true,
+														"recursive": false,
 														"modifiedDatetimeStart": {
 															"value": "@variables('watermark_value')",
 															"type": "Expression"
@@ -499,7 +499,7 @@
 													"type": "DatasetReference",
 													"parameters": {
 														"folder": {
-															"value": "@concat(\n    activity('Read Table Details').output.firstRow.source_system,\n'/',\nactivity('Read Table Details').output.firstRow.source_table_name,\n'/',\nvariables('start_time')\n)",
+															"value": "@concat(\n    activity('Read Table Details').output.firstRow.source_system,\n    '/',\n    activity('Read Table Details').output.firstRow.source_table_name,\n    '/',\n    variables('start_time')\n)",
 															"type": "Expression"
 														},
 														"container": "landing-v3"
@@ -534,7 +534,8 @@
 						"type": "String"
 					}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-11-09T07:47:45Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
@@ -567,7 +568,7 @@
 							"source": {
 								"type": "AzureSqlSource",
 								"sqlReaderQuery": {
-									"value": "SELECT * FROM ctrl.table_config WHERE is_active=1 AND source_system ='@{pipeline().parameters.source_system}'",
+									"value": "select table_id from ctrl.table_config where is_active = 1 and source_system='@{pipeline().parameters.source_system}'",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00",
@@ -712,7 +713,7 @@
 					},
 					"adf_run_id": {
 						"type": "string",
-						"defaultValue": "a12"
+						"defaultValue": "a11"
 					}
 				},
 				"variables": {
@@ -720,7 +721,8 @@
 						"type": "String"
 					}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-11-09T07:47:46Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
@@ -793,7 +795,8 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-11-01T07:17:20Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_PostgreSql')]",
