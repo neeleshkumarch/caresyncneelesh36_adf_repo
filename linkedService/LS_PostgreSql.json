@@ -1,5 +1,6 @@
 {
 	"name": "LS_PostgreSql",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "PostgreSqlV2",
@@ -19,6 +20,5 @@
 			"sslMode": 2,
 			"authenticationType": "Basic"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/linkedservices"
+	}
 }
