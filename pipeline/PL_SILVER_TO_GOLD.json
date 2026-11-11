@@ -51,39 +51,6 @@
 					"isSequential": false,
 					"activities": [
 						{
-							"name": "Ingest from Source to Silver",
-							"type": "ExecutePipeline",
-							"dependsOn": [
-								{
-									"activity": "Insert in Progress Status",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"pipeline": {
-									"referenceName": "PL_SOURCE_TO_SILVER_INNER",
-									"type": "PipelineReference"
-								},
-								"waitOnCompletion": true,
-								"parameters": {
-									"table_id": {
-										"value": "@item().table_id",
-										"type": "Expression"
-									},
-									"adf_run_id": {
-										"value": "@pipeline().parameters.adf_run_id",
-										"type": "Expression"
-									}
-								}
-							}
-						},
-						{
 							"name": "Insert in Progress Status",
 							"type": "Script",
 							"dependsOn": [],
@@ -104,7 +71,7 @@
 									{
 										"type": "Query",
 										"text": {
-											"value": "INSERT INTO ctrl36.audit_log(adf_run_id,table_id,stage,status,start_time) \nVALUES('@{pipeline().parameters.adf_run_id}',@{item().table_id},'SOURCE_TO_SILVER','IN_PROGRESS',SYSUTCDATETIME())",
+											"value": "INSERT INTO ctrl36.audit_log(adf_run_id,table_id,stage,status,start_time) \nVALUES('@{pipeline().parameters.adf_run_id}',@{item().table_id},'SILVER_TO_GOLD','IN_PROGRESS',SYSUTCDATETIME())",
 											"type": "Expression"
 										}
 									}
@@ -117,7 +84,7 @@
 							"type": "Script",
 							"dependsOn": [
 								{
-									"activity": "Ingest from Source to Silver",
+									"activity": "Landing to Bronze",
 									"dependencyConditions": [
 										"Failed"
 									]
@@ -146,6 +113,54 @@
 									}
 								],
 								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "Landing to Bronze",
+							"type": "DatabricksNotebook",
+							"dependsOn": [
+								{
+									"activity": "Insert in Progress Status",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": {
+									"value": "/neeleshkumar-repo/neeleshcaresync-adb-repo/Gold/NB_@{item().gold_table_name}",
+									"type": "Expression"
+								},
+								"baseParameters": {
+									"source_system": {
+										"value": "@activity('Read Table Details').output.firstRow.source_system",
+										"type": "Expression"
+									},
+									"table_name": {
+										"value": "@activity('Read Table Details').output.firstRow.bronze_table_name",
+										"type": "Expression"
+									},
+									"landing_timestamp": {
+										"value": "@variables('start_time')",
+										"type": "Expression"
+									},
+									"source_file_format": {
+										"value": "@coalesce(activity('Read Table Details').output.firstRow.source_file_format,'')",
+										"type": "Expression"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_AzureDatabricks",
+								"type": "LinkedServiceReference"
 							}
 						}
 					]
