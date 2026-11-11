@@ -18,7 +18,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT * FROM ctrl.table_config WHERE table_id =@{pipeline().parameters.table_id}",
+							"value": "SELECT * FROM ctrl36.table_config WHERE table_id =@{pipeline().parameters.table_id}",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
