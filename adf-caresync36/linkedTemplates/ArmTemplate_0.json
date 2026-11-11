@@ -288,7 +288,7 @@
 							"source": {
 								"type": "AzureSqlSource",
 								"sqlReaderQuery": {
-									"value": "select table_id,gold_table_name from ctrl36.table_config where is_active = 1 and stage ='SILVET_TO_GOLD'",
+									"value": "select table_id,gold_table_name from ctrl36.table_config where is_active = 1 and stage ='SILVER_TO_GOLD'",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00",
@@ -409,24 +409,6 @@
 										"notebookPath": {
 											"value": "/neeleshkumar-repo/neeleshcaresync-adb-repo/Gold/NB_@{item().gold_table_name}",
 											"type": "Expression"
-										},
-										"baseParameters": {
-											"source_system": {
-												"value": "@activity('Read Table Details').output.firstRow.source_system",
-												"type": "Expression"
-											},
-											"table_name": {
-												"value": "@activity('Read Table Details').output.firstRow.bronze_table_name",
-												"type": "Expression"
-											},
-											"landing_timestamp": {
-												"value": "@variables('start_time')",
-												"type": "Expression"
-											},
-											"source_file_format": {
-												"value": "@coalesce(activity('Read Table Details').output.firstRow.source_file_format,'')",
-												"type": "Expression"
-											}
 										}
 									},
 									"linkedServiceName": {
